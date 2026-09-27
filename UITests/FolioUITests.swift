@@ -40,6 +40,25 @@ final class FolioUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 5))
     }
+    func testShareMenuCancellationPreservesUnsavedEdits() throws {
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
+        app.typeKey("e", modifierFlags: .command)
+        let source = app.textViews["MarkdownSource"]
+        source.click()
+        app.typeKey("a", modifierFlags: .command)
+        source.typeText("# Unsaved draft\n")
+        app.buttons["Share"].click()
+        XCTAssertTrue(app.menus.firstMatch.waitForExistence(timeout: 5))
+        app.typeKey(.escape, modifierFlags: [])
+        XCTAssertEqual(source.value as? String, "# Unsaved draft\n")
+        XCTAssertEqual(try String(contentsOf: file, encoding: .utf8), "# Original heading\n\nReadable paragraph.\n")
+        app.typeKey("s", modifierFlags: .command)
+        expectation(for: NSPredicate { _, _ in
+            (try? String(contentsOf: self.file, encoding: .utf8)) == "# Unsaved draft\n"
+        }, evaluatedWith: nil)
+        waitForExpectations(timeout: 5)
+    }
+
     func testClosingUnsavedEditsOffersCancelAndDiscard() {
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
         app.typeKey("e", modifierFlags: .command)

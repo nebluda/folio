@@ -12,6 +12,7 @@ final class MarkdownDocument: NSDocument {
     private var ignoredExternalData: Data?
 
     override class var autosavesInPlace: Bool { false }
+    override var allowsDocumentSharing: Bool { true }
     override var fileURL: URL? { didSet { watchDirectory() } }
 
     override func makeWindowControllers() {

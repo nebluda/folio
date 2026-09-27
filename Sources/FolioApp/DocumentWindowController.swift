@@ -3,7 +3,7 @@ import WebKit
 import FolioCore
 import os
 
-final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NSTextViewDelegate, WKNavigationDelegate, NSWindowDelegate, NSSearchFieldDelegate {
+final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NSSharingServicePickerToolbarItemDelegate, NSTextViewDelegate, WKNavigationDelegate, NSWindowDelegate, NSSearchFieldDelegate {
     private static let websiteDataStore = WKWebsiteDataStore.nonPersistent()
     private static let renderQueue = DispatchQueue(label: "app.folio.render", qos: .userInitiated)
     // Accessed exclusively on renderQueue. Share parser/highlighter setup across windows.
@@ -195,9 +195,16 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
         editor.font = .monospacedSystemFont(ofSize: 14 * value, weight: .regular)
     }
 
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] { [.flexibleSpace, .init("mode"), .init("find")] }
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] { [.flexibleSpace, .init("mode"), .init("share"), .init("find")] }
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] { toolbarAllowedItemIdentifiers(toolbar) }
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier identifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+        if identifier.rawValue == "share" {
+            let item = NSSharingServicePickerToolbarItem(itemIdentifier: identifier)
+            item.delegate = self
+            item.label = "Share"
+            item.toolTip = "Share Markdown file"
+            return item
+        }
         let item = NSToolbarItem(itemIdentifier: identifier)
         if identifier.rawValue == "mode" { item.view = mode; item.label = "Read or Edit" }
         else if identifier.rawValue == "find" {
@@ -205,6 +212,10 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
             item.label = "Find"; item.target = self; item.action = #selector(showFind(_:))
         }
         return item
+    }
+    func items(for pickerToolbarItem: NSSharingServicePickerToolbarItem) -> [Any] {
+        // NSDocument saves current edits (or asks for a location) before sharing.
+        markdown.map { [$0] } ?? []
     }
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         preview.evaluateJavaScript("window.scrollTo(0, \(readingY))", completionHandler: nil)

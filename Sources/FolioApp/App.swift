@@ -76,6 +76,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         item(file, "Close", #selector(NSWindow.performClose(_:)), "w")
         item(file, "Save", #selector(NSDocument.save(_:)), "s")
         item(file, "Save As…", #selector(NSDocument.saveAs(_:)), "s", shift: true)
+        file.addItem(.separator())
+        file.addItem(documents.standardShareMenuItem())
         let edit = menu("Edit")
         item(edit, "Undo", Selector(("undo:")), "z")
         item(edit, "Redo", Selector(("redo:")), "z", shift: true)
