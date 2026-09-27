@@ -11,7 +11,7 @@
 
 ![Folio in light appearance](docs/folio-light.png)
 
-[Dark appearance](docs/folio-dark.png) · [Finder Quick Look](docs/folio-quicklook.png)
+[Dark appearance](docs/folio-dark.png) · [Finder Quick Look](docs/folio-quicklook.png) · [Highlighted editor](docs/folio-editor-dark.png)
 
 macOS 14+, Apple Silicon first. No account, server, subscription, or telemetry.
 
@@ -70,7 +70,7 @@ The command resolves relative paths from the current directory. Invalid options,
 
 ## Reading and editing
 
-GitHub-style headings, lists, task lists, tables, links, images, and highlighted code. Rendered reading is the default; source editing is an explicit mode. Windows support New, Open Recent, Save As, undo/redo, Find, and zoom. Close with unsaved edits offers Save, Don't Save, or Cancel.
+GitHub-style headings, lists, task lists, tables, links, images, and highlighted code. Rendered reading is the default; source editing is an explicit mode. Edit mode colors Markdown headings, emphasis, links, list markers, quotes, and code. Highlighting adapts to light/dark appearance and uses temporary display attributes, preserving plain text, selection, and undo history. Windows support New, Open Recent, Save As, undo/redo, Find, and zoom. Close with unsaved edits offers Save, Don't Save, or Cancel.
 
 External changes reload a clean document. If you have unsaved edits, Folio lets you reload or keep them and save a separate copy. It refuses to overwrite a disk version it has not loaded.
 

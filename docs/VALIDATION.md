@@ -6,7 +6,7 @@ Recorded 2026-09-27. This is an installable local prototype, ad-hoc signed, not 
 
 The [macOS workflow](https://github.com/nebluda/folio/actions/workflows/ci.yml) builds both the complete release bundle and the Xcode app with its embedded Quick Look extension. It runs:
 
-- 18 Swift tests for Markdown rendering, unsafe HTML/URLs, malformed input, tables/tasks/code, image restrictions, UTF-8/BOM and line endings, atomic file operations, external changes, stale writes, and CLI argument parsing.
+- 23 Swift tests for Markdown rendering, unsafe HTML/URLs, malformed input, tables/tasks/code, image restrictions, UTF-8/BOM and line endings, atomic file operations, external changes, stale writes, CLI argument parsing, Unicode syntax ranges, and highlighting without text/selection/undo changes.
 - 6 CLI process checks for help/version, invalid options, missing files, directories, and launch failures. Argument tests include multiple files, relative paths, spaces, Unicode, and deduplication.
 - 4 native UI scenarios: read/edit/undo/redo/save/reopen/find; cancel/discard unsaved close; clean external reload and unsaved conflict; actual Finder Space rendering and double-click launch with Folio closed.
 
