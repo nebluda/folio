@@ -1,0 +1,64 @@
+name: Folio
+options:
+  deploymentTarget:
+    macOS: '14.0'
+packages:
+  Folio:
+    path: .
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    CODE_SIGN_IDENTITY: '-'
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ''
+    ENABLE_HARDENED_RUNTIME: NO
+    MACOSX_DEPLOYMENT_TARGET: '14.0'
+targets:
+  Folio:
+    type: application
+    platform: macOS
+    sources:
+      - Sources/FolioApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.nebluda.folio
+        PRODUCT_MODULE_NAME: FolioApp
+        INFOPLIST_FILE: App/Info.plist
+    dependencies:
+      - package: Folio
+        product: FolioCore
+      - target: FolioPreview
+        embed: true
+  FolioPreview:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Extension
+        excludes: [main.swift, Info.plist, FolioPreview.entitlements]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.nebluda.folio.preview
+        INFOPLIST_FILE: Extension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Extension/FolioPreview.entitlements
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: Folio
+        product: FolioCore
+  FolioUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources: [UITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.nebluda.folio.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Folio
+    dependencies:
+      - target: Folio
+schemes:
+  Folio:
+    build:
+      targets:
+        Folio: all
+    test:
+      targets: [FolioUITests]

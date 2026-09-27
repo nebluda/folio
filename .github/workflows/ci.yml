@@ -1,0 +1,40 @@
+name: macOS
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Select newest installed Xcode
+        run: |
+          XCODE_PATH=$(python3 -c 'import glob,re; print(max(glob.glob("/Applications/Xcode_*.app"), key=lambda p: tuple(map(int,re.findall(r"\d+",p)))))')
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+          swift --version
+      - name: Unit and document integration tests
+        run: swift test
+      - name: Build relocatable release bundle
+        run: python3 scripts/package.py
+      - name: CLI process tests
+        run: python3 scripts/test-cli.py
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Native UI tests
+        run: xcodebuild test -project Folio.xcodeproj -scheme Folio -destination 'platform=macOS' -derivedDataPath build/Xcode -resultBundlePath build/UIResults.xcresult CODE_SIGN_IDENTITY=-
+      - name: Archive app
+        if: always()
+        run: |
+          if [ -d build/Folio.app ]; then ditto -c -k --sequesterRsrc --keepParent build/Folio.app build/Folio-macOS.zip; fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: Folio-macOS
+          path: |
+            build/Folio-macOS.zip
+            build/UIResults.xcresult
