@@ -1,3 +1,5 @@
+<img src="docs/folio-icon.png" width="96" alt="Folio app icon">
+
 # Folio
 
 **Preview for Markdown.** A small native macOS reader, basic editor, and Finder Quick Look extension.
@@ -5,7 +7,7 @@
 - **Space** in Finder → a formatted preview.
 - **Double-click** → a native window, already rendered.
 - **`folio notes.md`** → that same window from Terminal.
-- **⌘E** → source editing. **⌘S** → save. **⌘F** → find.
+- **Eye / pencil** → read or edit. **⌘E** toggles, **⌘S** saves, **⌘F** finds.
 
 ![Folio in light appearance](docs/folio-light.png)
 
