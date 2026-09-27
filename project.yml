@@ -19,6 +19,8 @@ targets:
     platform: macOS
     sources:
       - Sources/FolioApp
+      - path: App/Folio.icns
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.nebluda.folio

@@ -12,6 +12,7 @@
 		36675CBAE5DD0BF706DA6948 /* FolioUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99FA243DAD65E63720290B8 /* FolioUITests.swift */; };
 		3F287A5D0234A6B6AF784D3B /* MarkdownDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF68FF64818E4157FC6BB67 /* MarkdownDocument.swift */; };
 		5D66D20231FB94CF147E9066 /* FolioCore in Frameworks */ = {isa = PBXBuildFile; productRef = B6A8CA359CE44514A50D825D /* FolioCore */; };
+		939022752647B5B8D7872A93 /* Folio.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A251BB0002F25A6AEA1CC4C /* Folio.icns */; };
 		A2B62F5ADC81C6236AF3B7E0 /* FolioCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79805AA085F286FEB0BB3DA4 /* FolioCore */; };
 		D6C873FB109CC8D44102FC9A /* FolioPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 40D2020BC4A6AC7302163686 /* FolioPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FF88AB084B9220FF3783F332 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA95700F204107475DF4702 /* App.swift */; };
@@ -49,6 +50,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0A251BB0002F25A6AEA1CC4C /* Folio.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Folio.icns; sourceTree = "<group>"; };
 		40D2020BC4A6AC7302163686 /* FolioPreview.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FolioPreview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B8BAAD0990BFEBF5AC22207 /* Folio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Folio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FF68FF64818E4157FC6BB67 /* MarkdownDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownDocument.swift; sourceTree = "<group>"; };
@@ -94,12 +96,21 @@
 		167E3E30A49919FD8D56D74D = {
 			isa = PBXGroup;
 			children = (
+				44D0BB1ACC83A335DDAE95F0 /* App */,
 				9D9490D36BB58F379D835C27 /* Extension */,
 				1448CCB5D9CFBEAA32C6A22D /* FolioApp */,
 				6B8521CC72CDF06426DFDBDE /* Packages */,
 				551C78EC09133ECF3EBB0349 /* UITests */,
 				62523BE78BDC40FAA03B8BBD /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		44D0BB1ACC83A335DDAE95F0 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0A251BB0002F25A6AEA1CC4C /* Folio.icns */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 		551C78EC09133ECF3EBB0349 /* UITests */ = {
@@ -144,6 +155,7 @@
 			buildConfigurationList = 053AAE1D1B4F8AD6CAC8296F /* Build configuration list for PBXNativeTarget "Folio" */;
 			buildPhases = (
 				3859F542EDB723E250691952 /* Sources */,
+				8AF20F2D7ED0809F38E8AD11 /* Resources */,
 				9DDB037244D0F79104ADBCB6 /* Frameworks */,
 				1EC4B01E99A3DD20DEFE6BEC /* Embed Foundation Extensions */,
 			);
@@ -244,6 +256,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8AF20F2D7ED0809F38E8AD11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				939022752647B5B8D7872A93 /* Folio.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3859F542EDB723E250691952 /* Sources */ = {

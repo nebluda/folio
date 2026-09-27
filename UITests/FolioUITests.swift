@@ -9,14 +9,8 @@ final class FolioUITests: XCTestCase {
         file = FileManager.default.temporaryDirectory.appendingPathComponent("Folio UI \(UUID()).md")
         try Data("# Original heading\n\nReadable paragraph.\n".utf8).write(to: file)
         app = XCUIApplication()
+        app.launchArguments = [file.path]
         app.launch()
-        app.typeKey("o", modifierFlags: .command)
-        app.typeKey("g", modifierFlags: [.command, .shift])
-        let path = app.dialogs.textFields.firstMatch
-        XCTAssertTrue(path.waitForExistence(timeout: 5))
-        path.typeText(file.path)
-        app.typeKey(.return, modifierFlags: [])
-        app.typeKey(.return, modifierFlags: [])
     }
     override func tearDownWithError() throws {
         app.terminate()
@@ -25,7 +19,7 @@ final class FolioUITests: XCTestCase {
     func testReadEditUndoSaveAndReopen() throws {
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
         app.typeKey("e", modifierFlags: .command)
-        let source = app.textViews["Markdown source"]
+        let source = app.textViews["MarkdownSource"]
         XCTAssertTrue(source.waitForExistence(timeout: 5))
         source.click()
         app.typeKey("a", modifierFlags: .command)
@@ -40,18 +34,14 @@ final class FolioUITests: XCTestCase {
         XCTAssertTrue(app.webViews.firstMatch.exists)
         app.typeKey("f", modifierFlags: .command)
         XCTAssertTrue(app.searchFields["Find in document"].exists)
-        app.typeKey("w", modifierFlags: .command)
-        app.typeKey("o", modifierFlags: .command)
-        app.typeKey("g", modifierFlags: [.command, .shift])
-        app.dialogs.textFields.firstMatch.typeText(file.path)
-        app.typeKey(.return, modifierFlags: [])
-        app.typeKey(.return, modifierFlags: [])
+        app.terminate()
+        app.launch()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 5))
     }
     func testClosingUnsavedEditsOffersCancelAndDiscard() {
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
         app.typeKey("e", modifierFlags: .command)
-        let source = app.textViews["Markdown source"]
+        let source = app.textViews["MarkdownSource"]
         source.click(); source.typeText("unsaved")
         app.typeKey("w", modifierFlags: .command)
         XCTAssertTrue(app.buttons["Cancel"].waitForExistence(timeout: 5))

@@ -6,9 +6,10 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [
         .library(name: "FolioCore", targets: ["FolioCore"]),
-        .executable(name: "Folio", targets: ["FolioApp"]),
+        .executable(name: "FolioDesktop", targets: ["FolioApp"]),
         .executable(name: "FolioCLI", targets: ["FolioCLI"]),
-        .executable(name: "FolioPreview", targets: ["FolioPreview"]),
+        .executable(name: "FolioPreviewHost", targets: ["FolioPreview"]),
+        .executable(name: "FolioBench", targets: ["FolioBench"]),
     ],
     dependencies: [.package(url: "https://github.com/swiftlang/swift-markdown.git", exact: "0.9.0")],
     targets: [
@@ -17,6 +18,7 @@ let package = Package(
         .executableTarget(name: "FolioApp", dependencies: ["FolioCore"]),
         .executableTarget(name: "FolioCLI", dependencies: ["FolioCore"]),
         .executableTarget(name: "FolioPreview", dependencies: ["FolioCore"], path: "Extension", exclude: ["Info.plist", "FolioPreview.entitlements"]),
+        .executableTarget(name: "FolioBench", dependencies: ["FolioCore"], path: "Tools/FolioBench"),
         .testTarget(name: "FolioCoreTests", dependencies: ["FolioCore"]),
         .testTarget(name: "FolioAppTests", dependencies: ["FolioApp"]),
     ],
