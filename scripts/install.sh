@@ -19,5 +19,7 @@ install -m 755 "$app_dir/Folio.app/Contents/Helpers/folio" "$bin_dir/folio"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app_dir/Folio.app"
 pluginkit -a "$app_dir/Folio.app/Contents/PlugIns/FolioPreview.appex"
 pluginkit -e use -i io.github.nebluda.folio.preview
+qlmanage -r >/dev/null
+qlmanage -r cache >/dev/null
 printf 'Installed %s\nCLI: %s/folio\n' "$app_dir/Folio.app" "$bin_dir"
 printf 'If needed, add %s to PATH. See README for Finder defaults.\n' "$bin_dir"

@@ -45,6 +45,16 @@ pluginkit -e use -i io.github.nebluda.folio.preview
 
 Close the existing Quick Look panel and press Space again. This changes only the preview provider; MarkEdit remains installed. To restore MarkEdit's normal extension selection later, run `pluginkit -e default -i app.cyan.markedit.preview-extension`. After uninstalling Folio, choose another default editor using Finder's **Open with → Change All**.
 
+If Finder continues showing MarkEdit's source preview after disabling its extension, its old preview process may still be alive. Close Quick Look, then refresh its cache and stop that specific preview helper (this does not quit the MarkEdit editor):
+
+```sh
+qlmanage -r
+qlmanage -r cache
+pkill -f '^/Applications/MarkEdit.app/Contents/PlugIns/PreviewExtension.appex/Contents/MacOS/PreviewExtension( |$)' || true
+```
+
+Press Space again. The preview content and the **Open with** button are separate: the content comes from the selected Quick Look extension, while the button follows your default editor. A `.md` extension does not itself format plain terminal output; reports need Markdown structure, and literal logs/ASCII trees should be enclosed in fenced code blocks to preserve their layout.
+
 ## CLI
 
 ```sh
