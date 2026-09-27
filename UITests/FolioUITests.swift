@@ -71,7 +71,7 @@ final class FolioUITests: XCTestCase {
         XCTAssertTrue(finder.descendants(matching: .any)["QLControlOpen"].firstMatch.waitForExistence(timeout: 15))
         XCTAssertTrue(finder.staticTexts["Original heading"].firstMatch.waitForExistence(timeout: 10))
         // Keep the actual system preview for visual inspection, including extension failures.
-        let screenshot = XCTAttachment(screenshot: finder.screenshot())
+        let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         screenshot.name = "Finder Quick Look"; screenshot.lifetime = .keepAlways; add(screenshot)
         finder.typeKey(.escape, modifierFlags: [])
         let fileIcon = finder.images[file.lastPathComponent].firstMatch
