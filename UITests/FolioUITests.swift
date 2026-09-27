@@ -1,4 +1,5 @@
 import XCTest
+import AppKit
 
 final class FolioUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -50,5 +51,32 @@ final class FolioUITests: XCTestCase {
         app.typeKey("w", modifierFlags: .command)
         app.sheets.buttons["Don’t Save"].click()
         XCTAssertEqual(try? String(contentsOf: file, encoding: .utf8), "# Original heading\n\nReadable paragraph.\n")
+    }
+
+    func testFinderQuickLookAndDefaultOpen() throws {
+        let products = Bundle(for: Self.self).bundleURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let appURL = products.appendingPathComponent("Folio.app")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: appURL.path))
+        for arguments in [["-a", appURL.appendingPathComponent("Contents/PlugIns/FolioPreview.appex").path], ["-e", "use", "-i", "io.github.nebluda.folio.preview"]] {
+            let command = Process(); command.executableURL = URL(fileURLWithPath: "/usr/bin/pluginkit"); command.arguments = arguments
+            try command.run(); command.waitUntilExit(); XCTAssertEqual(command.terminationStatus, 0)
+        }
+        let associated = expectation(description: "Associate test file")
+        NSWorkspace.shared.setDefaultApplication(at: appURL, toOpenFileAt: file) { error in
+            XCTAssertNil(error); associated.fulfill()
+        }
+        wait(for: [associated], timeout: 10)
+        app.terminate()
+        NSWorkspace.shared.activateFileViewerSelecting([file])
+        let finder = XCUIApplication(bundleIdentifier: "com.apple.finder")
+        finder.activate()
+        finder.typeKey(" ", modifierFlags: [])
+        XCTAssertTrue(finder.buttons["QLControlOpen"].firstMatch.waitForExistence(timeout: 15))
+        // Keep the actual system preview for visual inspection, including extension failures.
+        let screenshot = XCTAttachment(screenshot: finder.screenshot())
+        screenshot.name = "Finder Quick Look"; screenshot.lifetime = .keepAlways; add(screenshot)
+        finder.typeKey(.escape, modifierFlags: [])
+        XCTAssertTrue(NSWorkspace.shared.open(file))
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
     }
 }

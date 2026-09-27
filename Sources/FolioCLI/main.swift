@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import FolioCore
 
 func fail(_ error: Error) -> Never {
@@ -20,12 +20,18 @@ do {
         guard let app, FileManager.default.fileExists(atPath: app.path) else {
             throw FolioError.invalidArgument("Folio.app is not installed. Run scripts/install.sh first.")
         }
-        // LaunchServices runs in the system launcher, keeping this CLI out of the app lifecycle.
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-        process.arguments = ["-a", app.path, "--"] + (files.isEmpty ? ["folio://open"] : files.map(\.path))
-        try process.run()
-        process.waitUntilExit()
-        if process.terminationStatus != 0 { throw FolioError.invalidArgument("macOS could not open Folio (exit \(process.terminationStatus)).") }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        var completed = false
+        var launchError: Error?
+        NSWorkspace.shared.open(files.isEmpty ? [URL(string: "folio://open")!] : files, withApplicationAt: app, configuration: configuration) { _, error in
+            launchError = error
+            completed = true
+        }
+        let deadline = Date(timeIntervalSinceNow: 15)
+        while !completed && Date() < deadline { RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.005)) }
+        guard completed else { throw FolioError.invalidArgument("Timed out opening Folio.") }
+        if let launchError { throw launchError }
+
     }
 } catch { fail(error) }

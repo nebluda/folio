@@ -4,6 +4,10 @@ import FolioCore
 import os
 
 final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NSTextViewDelegate, WKNavigationDelegate, NSWindowDelegate, NSSearchFieldDelegate {
+    private static let websiteDataStore = WKWebsiteDataStore.nonPersistent()
+    private static let renderQueue = DispatchQueue(label: "app.folio.render", qos: .userInitiated)
+    // Accessed exclusively on renderQueue. Share parser/highlighter setup across windows.
+    private static var sharedRenderer: MarkdownRenderer?
     private let preview: WKWebView
     private let editor = NSTextView()
     private let editorScroll = NSScrollView()
@@ -11,8 +15,6 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     private let searchRow = NSStackView()
     private let content = NSView()
     private let mode = NSSegmentedControl(labels: ["Read", "Edit"], trackingMode: .selectOne, target: nil, action: nil)
-    private let renderQueue = DispatchQueue(label: "app.folio.render", qos: .userInitiated)
-    private var renderer: MarkdownRenderer?
     private var generation = 0
     private var renderedSource: String?
     private var readingY = 0.0
@@ -27,10 +29,11 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     init(document: MarkdownDocument) {
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-        configuration.websiteDataStore = .nonPersistent()
+        configuration.websiteDataStore = Self.websiteDataStore
         preview = WKWebView(frame: .zero, configuration: configuration)
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 850, height: 760), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         super.init(window: window)
+        window.animationBehavior = .none
         window.minSize = NSSize(width: 420, height: 300)
         window.title = "Untitled"
         window.titlebarAppearsTransparent = true
@@ -115,10 +118,10 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
         let text = markdown.source, url = markdown.fileURL
         generation += 1; let requested = generation
         renderStarted = CFAbsoluteTimeGetCurrent()
-        renderQueue.async { [weak self] in
-            guard let self else { return }
-            if renderer == nil { renderer = MarkdownRenderer() }
-            let html = renderer!.render(text, fileURL: url)
+        Self.renderQueue.async { [weak self] in
+            guard self != nil else { return }
+            if Self.sharedRenderer == nil { Self.sharedRenderer = MarkdownRenderer() }
+            let html = Self.sharedRenderer!.render(text, fileURL: url)
             DispatchQueue.main.async { [weak self] in
                 guard let self, generation == requested else { return }
                 renderedSource = text
