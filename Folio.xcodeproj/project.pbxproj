@@ -13,6 +13,7 @@
 		3F287A5D0234A6B6AF784D3B /* MarkdownDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF68FF64818E4157FC6BB67 /* MarkdownDocument.swift */; };
 		5D66D20231FB94CF147E9066 /* FolioCore in Frameworks */ = {isa = PBXBuildFile; productRef = B6A8CA359CE44514A50D825D /* FolioCore */; };
 		939022752647B5B8D7872A93 /* Folio.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A251BB0002F25A6AEA1CC4C /* Folio.icns */; };
+		96D956FD9854D00EB0B00DDA /* EditorHighlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E212F28F1A3C854EB65F0277 /* EditorHighlighter.swift */; };
 		A2B62F5ADC81C6236AF3B7E0 /* FolioCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79805AA085F286FEB0BB3DA4 /* FolioCore */; };
 		D6C873FB109CC8D44102FC9A /* FolioPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 40D2020BC4A6AC7302163686 /* FolioPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FF88AB084B9220FF3783F332 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA95700F204107475DF4702 /* App.swift */; };
@@ -59,6 +60,7 @@
 		AE9C0145498B10F56901055A /* DocumentWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentWindowController.swift; sourceTree = "<group>"; };
 		D00F41A415781BB25F2C309C /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
 		DBA95700F204107475DF4702 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		E212F28F1A3C854EB65F0277 /* EditorHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHighlighter.swift; sourceTree = "<group>"; };
 		E7956B4DA22C0FEF86396A8B /* folio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = folio; path = .; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -87,6 +89,7 @@
 			children = (
 				DBA95700F204107475DF4702 /* App.swift */,
 				AE9C0145498B10F56901055A /* DocumentWindowController.swift */,
+				E212F28F1A3C854EB65F0277 /* EditorHighlighter.swift */,
 				6FF68FF64818E4157FC6BB67 /* MarkdownDocument.swift */,
 			);
 			name = FolioApp;
@@ -275,6 +278,7 @@
 			files = (
 				FF88AB084B9220FF3783F332 /* App.swift in Sources */,
 				175A3221B0ACF418226A52CA /* DocumentWindowController.swift in Sources */,
+				96D956FD9854D00EB0B00DDA /* EditorHighlighter.swift in Sources */,
 				3F287A5D0234A6B6AF784D3B /* MarkdownDocument.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

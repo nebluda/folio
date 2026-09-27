@@ -10,6 +10,7 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     private static var sharedRenderer: MarkdownRenderer?
     private let preview: WKWebView
     private let editor = NSTextView()
+    private let editorHighlighter = EditorHighlighter()
     private let editorScroll = NSScrollView()
     private let search = NSSearchField()
     private let searchRow = NSStackView()
@@ -115,6 +116,7 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     func refreshFromDocument() {
         guard let markdown else { return }
         applying = true; editor.string = markdown.source; applying = false
+        if editing { editorHighlighter.update(editor, immediately: true) }
         renderedSource = nil
         renderPreview()
         if markdown.fileURL == nil { setEditing(true) }
@@ -151,6 +153,7 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
             }
             editor.setSelectedRange(NSIntersectionRange(selection, NSRange(location: 0, length: editor.string.utf16.count)))
             editorScroll.isHidden = false; preview.isHidden = true
+            editorHighlighter.update(editor, immediately: true)
             window?.makeFirstResponder(editor)
         } else {
             selection = editor.selectedRange()
@@ -163,6 +166,7 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     func textDidChange(_ notification: Notification) {
         guard !applying else { return }
         markdown?.edit(editor.string)
+        editorHighlighter.update(editor)
         // NSTextView registers edits with NSDocument's undo manager; NSDocument tracks dirtiness.
     }
     func undoManager(for view: NSTextView) -> UndoManager? { markdown?.undoManager }
