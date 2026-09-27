@@ -7,7 +7,7 @@
 - **Space** in Finder → a formatted preview.
 - **Double-click** → a native window, already rendered.
 - **`folio notes.md`** → that same window from Terminal.
-- **Eye / pencil** → read or edit. **⌘E** toggles, **⌘S** saves, **⌘F** finds.
+- **Page layout / pencil** → read or edit. **⌘E** toggles, **⌘S** saves, **⌘F** finds.
 
 ![Folio in light appearance](docs/folio-light.png)
 

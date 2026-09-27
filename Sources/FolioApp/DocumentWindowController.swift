@@ -16,7 +16,7 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     private let searchRow = NSStackView()
     private let content = NSView()
     private let mode = NSSegmentedControl(images: [
-        NSImage(systemSymbolName: "eye", accessibilityDescription: "Read")!,
+        NSImage(systemSymbolName: "rectangle.topthird.inset.filled", accessibilityDescription: "Read")!,
         NSImage(systemSymbolName: "pencil", accessibilityDescription: "Edit")!
     ], trackingMode: .selectOne, target: nil, action: nil)
     private var generation = 0
