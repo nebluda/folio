@@ -5,6 +5,7 @@ final class MarkdownDocument: NSDocument {
     var source = ""
     private(set) var snapshot = try! TextFile(data: Data())
     private var watcher: DispatchSourceFileSystemObject?
+    private var fileWatcher: DispatchSourceFileSystemObject?
     private var conflictVisible = false
     private var ignoredExternalData: Data?
 
@@ -42,13 +43,30 @@ final class MarkdownDocument: NSDocument {
 
     private func watchDirectory() {
         watcher?.cancel(); watcher = nil
+        watchFile()
         guard let url = fileURL else { return }
         let descriptor = open(url.deletingLastPathComponent().path, O_EVTONLY)
         guard descriptor >= 0 else { return }
         let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: [.write, .rename, .delete], queue: .main)
-        source.setEventHandler { [weak self] in self?.checkExternalChanges() }
+        source.setEventHandler { [weak self] in
+            self?.checkExternalChanges()
+            // Atomic saves replace the inode, so follow the new file.
+            self?.watchFile()
+        }
         source.setCancelHandler { Darwin.close(descriptor) }
         watcher = source; source.resume()
+    }
+
+    private func watchFile() {
+        fileWatcher?.cancel(); fileWatcher = nil
+        guard let url = fileURL else { return }
+        let descriptor = open(url.path, O_EVTONLY)
+        guard descriptor >= 0 else { return }
+        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor,
+            eventMask: [.write, .rename, .delete, .attrib], queue: .main)
+        source.setEventHandler { [weak self] in self?.checkExternalChanges() }
+        source.setCancelHandler { Darwin.close(descriptor) }
+        fileWatcher = source; source.resume()
     }
 
     func checkExternalChanges() {
@@ -81,6 +99,10 @@ final class MarkdownDocument: NSDocument {
         for controller in windowControllers { (controller as? DocumentWindowController)?.refreshFromDocument() }
     }
 
-    override func close() { watcher?.cancel(); watcher = nil; super.close() }
-    deinit { watcher?.cancel() }
+    override func close() {
+        watcher?.cancel(); watcher = nil
+        fileWatcher?.cancel(); fileWatcher = nil
+        super.close()
+    }
+    deinit { watcher?.cancel(); fileWatcher?.cancel() }
 }

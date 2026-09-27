@@ -85,7 +85,8 @@ final class FolioUITests: XCTestCase {
         app.typeKey("e", modifierFlags: .command)
         let source = app.textViews["MarkdownSource"]
         XCTAssertTrue(source.waitForExistence(timeout: 5))
-        try Data("# External edit\n".utf8).write(to: file, options: .atomic)
+        // In-place writes must be detected as well as atomic inode replacements.
+        try Data("# External edit\n".utf8).write(to: file)
         expectation(for: NSPredicate(format: "value == %@", "# External edit\n"), evaluatedWith: source)
         waitForExpectations(timeout: 5)
         source.click(); source.typeText("my unsaved edit")
