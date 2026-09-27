@@ -7,7 +7,9 @@
 - **`folio notes.md`** → that same window from Terminal.
 - **⌘E** → source editing. **⌘S** → save. **⌘F** → find.
 
-![Folio in dark appearance](docs/folio-dark.png)
+![Folio in light appearance](docs/folio-light.png)
+
+[Dark appearance](docs/folio-dark.png) · [Finder Quick Look](docs/folio-quicklook.png)
 
 macOS 14+, Apple Silicon first. No account, server, subscription, or telemetry.
 
@@ -30,7 +32,16 @@ Builds are ad-hoc signed for local use. This prototype is **not notarized**. Pub
 
 Launch Folio once. In **System Settings → General → Login Items & Extensions → Quick Look**, enable **Folio Preview**. The Help menu links to extension settings. If another Markdown preview extension is selected (for example MarkEdit), choose Folio there. Test by selecting a `.md` file in Finder and pressing **Space**; `qlmanage -p` is not a reliable test of modern preview extensions.
 
-For double-click: select a Markdown file → **Get Info → Open with → Folio → Change All**. Repeat for `.markdown` if necessary. Installing Folio does not remove other editors or their extensions.
+For double-click: choose **Help → Use Folio for Markdown Files…** in Folio. Alternatively, select a Markdown file → **Get Info → Open with → Folio → Change All**. Repeat for `.markdown` if necessary. Installing Folio does not remove other editors or their extensions.
+
+If MarkEdit still provides the preview, disable its preview extension in System Settings or run:
+
+```sh
+pluginkit -e ignore -i app.cyan.markedit.preview-extension
+pluginkit -e use -i io.github.nebluda.folio.preview
+```
+
+Close the existing Quick Look panel and press Space again. This changes only the preview provider; MarkEdit remains installed. To restore MarkEdit's normal extension selection later, run `pluginkit -e default -i app.cyan.markedit.preview-extension`. After uninstalling Folio, choose another default editor using Finder's **Open with → Change All**.
 
 ## CLI
 
@@ -69,3 +80,7 @@ xcodebuild test -project Folio.xcodeproj -scheme Folio -destination 'platform=ma
 The Swift package contains shared rendering/file/CLI logic, the AppKit document app, and the Quick Look provider. `project.yml` generates the checked-in Xcode project used for UI tests. CI runs unit, document, CLI process, and native UI tests, and uploads an app bundle and UI test results.
 
 Swift Markdown 0.9.0 (Apache 2.0 with Runtime Library Exception) provides the parser. highlight.js 11.11.1 (BSD 3-Clause) is vendored with its license; syntax highlighting runs through JavaScriptCore and produces static HTML. Folio itself is MIT licensed.
+
+## Performance and validation
+
+See [validation and measured performance](docs/VALIDATION.md). On an M1 Pro, the release app opened a representative 100 KB file in a median **703 ms from a fresh process** and **355 ms through the CLI with Folio running**. The cold target of 2 seconds is met; the 300 ms warm target remains a follow-up optimization. No network access is needed to render.
