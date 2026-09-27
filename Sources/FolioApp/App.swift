@@ -19,6 +19,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationWillFinishLaunching(_ notification: Notification) { buildMenus() }
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.activate(ignoringOtherApps: true)
+        let paths = CommandLine.arguments.dropFirst().filter { !$0.hasPrefix("-") && ["md", "markdown"].contains(URL(fileURLWithPath: $0).pathExtension.lowercased()) }
+        if !paths.isEmpty { application(NSApp, open: paths.map { URL(fileURLWithPath: $0) }) }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
             if !receivedOpen && documents.documents.isEmpty { documents.openDocument(nil) }
         }

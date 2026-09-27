@@ -2,7 +2,7 @@
 """Exercise the actual CLI process without modifying user documents."""
 import os, pathlib, subprocess
 root = pathlib.Path(__file__).resolve().parents[1]
-cli = root / 'build/Folio.app/Contents/MacOS/folio'
+cli = root / 'build/Folio.app/Contents/Helpers/folio'
 def run(*args, env=None):
     return subprocess.run([str(cli), *args], capture_output=True, text=True, timeout=10, env=env)
 assert run('--version').stdout.strip() == 'Folio 0.1.0'

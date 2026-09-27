@@ -83,7 +83,10 @@ public final class MarkdownRenderer {
         case let n as ListItem:
             if let checkbox = n.checkbox {
                 let checked = checkbox == .checked
-                return "<li class=\"task\"><span class=\"checkbox\" role=\"img\" aria-label=\"\(checked ? "Complete" : "Incomplete")\">\(checked ? "☑" : "☐")</span>\(children(n))</li>"
+                let body = n.children.enumerated().map { index, child in
+                    index == 0 && child is Paragraph ? children(child) : renderNode(child)
+                }.joined()
+                return "<li class=\"task\"><span class=\"checkbox\" role=\"img\" aria-label=\"\(checked ? "Complete" : "Incomplete")\">\(checked ? "☑" : "☐")</span>\(body)</li>"
             }
             return "<li>\(children(n))</li>"
         case let n as BlockQuote: return "<blockquote>\(children(n))</blockquote>"

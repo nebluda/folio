@@ -7,7 +7,7 @@ let package = Package(
     products: [
         .library(name: "FolioCore", targets: ["FolioCore"]),
         .executable(name: "Folio", targets: ["FolioApp"]),
-        .executable(name: "folio", targets: ["FolioCLI"]),
+        .executable(name: "FolioCLI", targets: ["FolioCLI"]),
         .executable(name: "FolioPreview", targets: ["FolioPreview"]),
     ],
     dependencies: [.package(url: "https://github.com/swiftlang/swift-markdown.git", exact: "0.9.0")],

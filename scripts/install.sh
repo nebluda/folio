@@ -10,11 +10,12 @@ staged_app="$app_dir/.Folio.installing.app"
 if [[ -e "$staged_app" ]]; then rm -rf "$staged_app"; fi
 ditto build/Folio.app "$staged_app"
 if [[ -e "$app_dir/Folio.app" ]]; then
-    /usr/bin/osascript -e 'tell application id "io.github.nebluda.folio" to quit' || true
+    if pgrep -x Folio >/dev/null; then echo 'Quit Folio before installing an update.' >&2; exit 1; fi
     rm -rf "$app_dir/Folio.app"
 fi
 mv "$staged_app" "$app_dir/Folio.app"
-ln -sfn "$app_dir/Folio.app/Contents/MacOS/folio" "$bin_dir/folio"
+if [[ -L "$bin_dir/folio" ]]; then rm "$bin_dir/folio"; fi
+install -m 755 "$app_dir/Folio.app/Contents/Helpers/folio" "$bin_dir/folio"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app_dir/Folio.app"
 pluginkit -a "$app_dir/Folio.app/Contents/PlugIns/FolioPreview.appex"
 pluginkit -e use -i io.github.nebluda.folio.preview

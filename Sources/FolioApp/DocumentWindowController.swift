@@ -29,9 +29,8 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
         configuration.websiteDataStore = .nonPersistent()
         preview = WKWebView(frame: .zero, configuration: configuration)
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 850, height: 760), styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView], backing: .buffered, defer: false)
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 850, height: 760), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         super.init(window: window)
-        self.document = document
         window.minSize = NSSize(width: 420, height: 300)
         window.title = "Untitled"
         window.titlebarAppearsTransparent = true
@@ -108,6 +107,7 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
         applying = true; editor.string = markdown.source; applying = false
         renderedSource = nil
         renderPreview()
+        if markdown.fileURL == nil { setEditing(true) }
     }
 
     private func renderPreview() {
@@ -136,8 +136,10 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
             preview.evaluateJavaScript("window.scrollY") { [weak self] result, _ in
                 if let y = result as? Double { self?.readingY = y }
             }
-            applying = true; editor.string = markdown?.source ?? ""; applying = false
-            editor.setSelectedRange(NSRange(location: min(selection.location, editor.string.utf16.count), length: 0))
+            if editor.string != markdown?.source {
+                applying = true; editor.string = markdown?.source ?? ""; applying = false
+            }
+            editor.setSelectedRange(NSIntersectionRange(selection, NSRange(location: 0, length: editor.string.utf16.count)))
             editorScroll.isHidden = false; preview.isHidden = true
             window?.makeFirstResponder(editor)
         } else {
