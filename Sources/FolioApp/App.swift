@@ -103,10 +103,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc private func makeDefault() {
-        guard let markdown = UTType("net.daringfireball.markdown") else { return }
-        NSWorkspace.shared.setDefaultApplication(at: Bundle.main.bundleURL, toOpen: markdown) { error in
-            DispatchQueue.main.async {
-                if let error { NSApp.presentError(error) }
+        // Resolve the preferred types on this Mac; other editors can register
+        // different identifiers for these extensions.
+        let types = Set(["md", "markdown"].compactMap { UTType(filenameExtension: $0) })
+        for type in types {
+            NSWorkspace.shared.setDefaultApplication(at: Bundle.main.bundleURL, toOpen: type) { error in
+                DispatchQueue.main.async {
+                    if let error { NSApp.presentError(error) }
+                }
             }
         }
     }

@@ -14,7 +14,10 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
     private let search = NSSearchField()
     private let searchRow = NSStackView()
     private let content = NSView()
-    private let mode = NSSegmentedControl(labels: ["Read", "Edit"], trackingMode: .selectOne, target: nil, action: nil)
+    private let mode = NSSegmentedControl(images: [
+        NSImage(systemSymbolName: "eye", accessibilityDescription: "Read")!,
+        NSImage(systemSymbolName: "pencil", accessibilityDescription: "Edit")!
+    ], trackingMode: .selectOne, target: nil, action: nil)
     private var generation = 0
     private var renderedSource: String?
     private var readingY = 0.0
@@ -103,6 +106,10 @@ final class DocumentWindowController: NSWindowController, NSToolbarDelegate, NST
         editorScroll.isHidden = true
         mode.selectedSegment = 0; mode.target = self; mode.action = #selector(changeMode(_:))
         mode.setAccessibilityLabel("Reading or editing mode")
+        mode.setToolTip("Read Markdown (⌘E)", forSegment: 0)
+        mode.setToolTip("Edit source (⌘E)", forSegment: 1)
+        mode.setWidth(34, forSegment: 0)
+        mode.setWidth(34, forSegment: 1)
     }
 
     func refreshFromDocument() {

@@ -6,6 +6,8 @@ final class MarkdownDocument: NSDocument {
     private(set) var snapshot = try! TextFile(data: Data())
     private var watcher: DispatchSourceFileSystemObject?
     private var fileWatcher: DispatchSourceFileSystemObject?
+    private var directoryWatchGeneration = 0
+    private var fileWatchGeneration = 0
     private var conflictVisible = false
     private var ignoredExternalData: Data?
 
@@ -43,30 +45,48 @@ final class MarkdownDocument: NSDocument {
 
     private func watchDirectory() {
         watcher?.cancel(); watcher = nil
+        directoryWatchGeneration += 1
+        let generation = directoryWatchGeneration
         watchFile()
         guard let url = fileURL else { return }
-        let descriptor = open(url.deletingLastPathComponent().path, O_EVTONLY)
-        guard descriptor >= 0 else { return }
-        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: [.write, .rename, .delete], queue: .main)
-        source.setEventHandler { [weak self] in
-            self?.checkExternalChanges()
-            // Atomic saves replace the inode, so follow the new file.
-            self?.watchFile()
+        // Opening a parent folder can wait for macOS privacy authorization even
+        // when the user has granted access to the individual document.
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            let descriptor = open(url.deletingLastPathComponent().path, O_EVTONLY)
+            guard descriptor >= 0 else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self, directoryWatchGeneration == generation else { Darwin.close(descriptor); return }
+                let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: [.write, .rename, .delete], queue: .main)
+                source.setEventHandler { [weak self] in
+                    self?.checkExternalChanges()
+                    // Atomic saves replace the inode, so follow the new file.
+                    self?.watchFile()
+                }
+                source.setCancelHandler { Darwin.close(descriptor) }
+                watcher = source; source.resume()
+                checkExternalChanges()
+            }
         }
-        source.setCancelHandler { Darwin.close(descriptor) }
-        watcher = source; source.resume()
     }
 
     private func watchFile() {
         fileWatcher?.cancel(); fileWatcher = nil
+        fileWatchGeneration += 1
+        let generation = fileWatchGeneration
         guard let url = fileURL else { return }
-        let descriptor = open(url.path, O_EVTONLY)
-        guard descriptor >= 0 else { return }
-        let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor,
-            eventMask: [.write, .rename, .delete, .attrib], queue: .main)
-        source.setEventHandler { [weak self] in self?.checkExternalChanges() }
-        source.setCancelHandler { Darwin.close(descriptor) }
-        fileWatcher = source; source.resume()
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            let descriptor = open(url.path, O_EVTONLY)
+            guard descriptor >= 0 else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self, fileWatchGeneration == generation else { Darwin.close(descriptor); return }
+                let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor,
+                    eventMask: [.write, .rename, .delete, .attrib], queue: .main)
+                source.setEventHandler { [weak self] in self?.checkExternalChanges() }
+                source.setCancelHandler { Darwin.close(descriptor) }
+                fileWatcher = source; source.resume()
+                checkExternalChanges()
+            }
+        }
     }
 
     func checkExternalChanges() {
@@ -100,6 +120,7 @@ final class MarkdownDocument: NSDocument {
     }
 
     override func close() {
+        directoryWatchGeneration += 1; fileWatchGeneration += 1
         watcher?.cancel(); watcher = nil
         fileWatcher?.cancel(); fileWatcher = nil
         super.close()

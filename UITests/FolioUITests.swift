@@ -19,7 +19,8 @@ final class FolioUITests: XCTestCase {
     }
     func testReadEditUndoSaveAndReopen() throws {
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
-        app.typeKey("e", modifierFlags: .command)
+        // Image-only controls retain discoverable names for assistive technology.
+        app.radioButtons["Edit"].click()
         let source = app.textViews["MarkdownSource"]
         XCTAssertTrue(source.waitForExistence(timeout: 5))
         source.click()
@@ -31,7 +32,7 @@ final class FolioUITests: XCTestCase {
         let saved = NSPredicate { _, _ in (try? String(contentsOf: self.file, encoding: .utf8)) == "# Changed heading\n\nHello again.\n" }
         expectation(for: saved, evaluatedWith: nil)
         waitForExpectations(timeout: 5)
-        app.typeKey("e", modifierFlags: .command)
+        app.radioButtons["Read"].click()
         XCTAssertTrue(app.webViews.firstMatch.exists)
         app.typeKey("f", modifierFlags: .command)
         XCTAssertTrue(app.searchFields["Find in document"].exists)
