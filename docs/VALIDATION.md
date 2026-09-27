@@ -8,7 +8,7 @@ The [macOS workflow](https://github.com/nebluda/folio/actions/workflows/ci.yml) 
 
 - 23 Swift tests for Markdown rendering, unsafe HTML/URLs, malformed input, tables/tasks/code, image restrictions, UTF-8/BOM and line endings, atomic file operations, external changes, stale writes, CLI argument parsing, Unicode syntax ranges, and highlighting without text/selection/undo changes.
 - 6 CLI process checks for help/version, invalid options, missing files, directories, and launch failures. Argument tests include multiple files, relative paths, spaces, Unicode, and deduplication.
-- 4 native UI scenarios: read/edit/undo/redo/save/reopen/find; cancel/discard unsaved close; clean external reload and unsaved conflict; actual Finder Space rendering and double-click launch with Folio closed.
+- 5 native UI scenarios: read/edit/undo/redo/save/reopen/find; cancel/discard unsaved close; clean external reload and unsaved conflict; actual Finder Space rendering and double-click launch with Folio closed; cancelling Share preserves unsaved edits and leaves the disk file untouched.
 
 CI exports XCTest results and screenshots as artifacts. Local Command Line Tools can build the app but do not include XCTest; full Xcode CI supplies the test runtime.
 
@@ -17,6 +17,7 @@ CI exports XCTest results and screenshots as artifacts. Local Command Line Tools
 Apple M1 Pro, macOS 26.6.2, Swift 6.3.2 Command Line Tools:
 
 - Installed release app and CLI outside the build directory; verified signatures, bundled resources, CLI launches, and native document rendering.
+- Verified the native Share toolbar popover and File → Share menu with the bundled fixture.
 - Checked light and dark appearance, Read/Edit controls, keyboard shortcuts, source accessibility label, and unsaved-close sheet.
 - Verified real Finder Space preview of `Fixtures/Welcome.md` with Folio closed. MarkEdit's competing preview extension needed disabling. Both the app and Quick Look use the same renderer and stylesheet.
 - Set the default Markdown handler through Folio's Help command and verified Launch Services opening the fixture in Folio.
