@@ -26,7 +26,13 @@ jobs:
           brew install xcodegen
           xcodegen generate
       - name: Native UI tests
-        run: xcodebuild test -project Folio.xcodeproj -scheme Folio -destination 'platform=macOS' -derivedDataPath build/Xcode -resultBundlePath build/UIResults.xcresult CODE_SIGN_IDENTITY=-
+        run: |
+          xcodebuild build-for-testing -project Folio.xcodeproj -scheme Folio -destination 'platform=macOS' -derivedDataPath build/Xcode CODE_SIGN_IDENTITY=-
+          TEST_APP="$PWD/build/Xcode/Build/Products/Debug/Folio.app"
+          /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$TEST_APP"
+          pluginkit -a "$TEST_APP/Contents/PlugIns/FolioPreview.appex"
+          pluginkit -e use -i io.github.nebluda.folio.preview
+          xcodebuild test-without-building -project Folio.xcodeproj -scheme Folio -destination 'platform=macOS' -derivedDataPath build/Xcode -resultBundlePath build/UIResults.xcresult CODE_SIGN_IDENTITY=-
       - name: Archive app
         if: always()
         run: |

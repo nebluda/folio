@@ -57,10 +57,7 @@ final class FolioUITests: XCTestCase {
         let products = Bundle(for: Self.self).bundleURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let appURL = products.appendingPathComponent("Folio.app")
         XCTAssertTrue(FileManager.default.fileExists(atPath: appURL.path))
-        for arguments in [["-a", appURL.appendingPathComponent("Contents/PlugIns/FolioPreview.appex").path], ["-e", "use", "-i", "io.github.nebluda.folio.preview"]] {
-            let command = Process(); command.executableURL = URL(fileURLWithPath: "/usr/bin/pluginkit"); command.arguments = arguments
-            try command.run(); command.waitUntilExit(); XCTAssertEqual(command.terminationStatus, 0)
-        }
+        XCTAssertTrue(FileManager.default.fileExists(atPath: appURL.appendingPathComponent("Contents/PlugIns/FolioPreview.appex").path))
         let associated = expectation(description: "Associate test file")
         NSWorkspace.shared.setDefaultApplication(at: appURL, toOpenFileAt: file) { error in
             XCTAssertNil(error); associated.fulfill()
@@ -72,11 +69,29 @@ final class FolioUITests: XCTestCase {
         finder.activate()
         finder.typeKey(" ", modifierFlags: [])
         XCTAssertTrue(finder.buttons["QLControlOpen"].firstMatch.waitForExistence(timeout: 15))
+        XCTAssertTrue(finder.staticTexts["Original heading"].firstMatch.waitForExistence(timeout: 10))
         // Keep the actual system preview for visual inspection, including extension failures.
         let screenshot = XCTAttachment(screenshot: finder.screenshot())
         screenshot.name = "Finder Quick Look"; screenshot.lifetime = .keepAlways; add(screenshot)
         finder.typeKey(.escape, modifierFlags: [])
         XCTAssertTrue(NSWorkspace.shared.open(file))
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
+    }
+
+    func testExternalReloadAndUnsavedConflict() throws {
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
+        app.typeKey("e", modifierFlags: .command)
+        let source = app.textViews["MarkdownSource"]
+        XCTAssertTrue(source.waitForExistence(timeout: 5))
+        try Data("# External edit\n".utf8).write(to: file, options: .atomic)
+        expectation(for: NSPredicate(format: "value == %@", "# External edit\n"), evaluatedWith: source)
+        waitForExpectations(timeout: 5)
+        source.click(); source.typeText("my unsaved edit")
+        try Data("# A newer disk version\n".utf8).write(to: file, options: .atomic)
+        let keep = app.sheets.buttons["Keep My Edits"]
+        XCTAssertTrue(keep.waitForExistence(timeout: 5))
+        keep.click()
+        XCTAssertTrue((source.value as? String)?.contains("my unsaved edit") == true)
+        XCTAssertEqual(try String(contentsOf: file, encoding: .utf8), "# A newer disk version\n")
     }
 }

@@ -7,6 +7,8 @@
 - **`folio notes.md`** → that same window from Terminal.
 - **⌘E** → source editing. **⌘S** → save. **⌘F** → find.
 
+![Folio in dark appearance](docs/folio-dark.png)
+
 macOS 14+, Apple Silicon first. No account, server, subscription, or telemetry.
 
 ## Build and install

@@ -1,10 +1,15 @@
 import AppKit
 import FolioCore
+import UniformTypeIdentifiers
 
 @main
 struct FolioApplication {
     static func main() {
         let app = NSApplication.shared
+        // A process-local override for reproducible screenshots; normal launches follow macOS.
+        if let appearance = ProcessInfo.processInfo.environment["FOLIO_APPEARANCE"] {
+            app.appearance = NSAppearance(named: appearance == "light" ? .aqua : .darkAqua)
+        }
         app.setActivationPolicy(.regular)
         let delegate = AppDelegate()
         app.delegate = delegate
@@ -89,11 +94,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         item(window, "Minimize", #selector(NSWindow.performMiniaturize(_:)), "m")
         item(window, "Bring All to Front", #selector(NSApplication.arrangeInFront(_:)))
         let help = menu("Help")
+        item(help, "Use Folio for Markdown Files…", #selector(makeDefault), target: self)
         item(help, "Set Up Finder Preview…", #selector(openQuickLookSettings), target: self)
     }
 
     @objc private func openQuickLookSettings() {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.quicklook.preview")!)
+    }
+
+    @objc private func makeDefault() {
+        guard let markdown = UTType("net.daringfireball.markdown") else { return }
+        NSWorkspace.shared.setDefaultApplication(at: Bundle.main.bundleURL, toOpen: markdown) { error in
+            DispatchQueue.main.async {
+                if let error { NSApp.presentError(error) }
+            }
+        }
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
