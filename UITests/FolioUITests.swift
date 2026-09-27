@@ -44,11 +44,11 @@ final class FolioUITests: XCTestCase {
         let source = app.textViews["MarkdownSource"]
         source.click(); source.typeText("unsaved")
         app.typeKey("w", modifierFlags: .command)
-        XCTAssertTrue(app.buttons["Cancel"].waitForExistence(timeout: 5))
-        app.buttons["Cancel"].click()
+        XCTAssertTrue(app.sheets.buttons["Cancel"].waitForExistence(timeout: 5))
+        app.sheets.buttons["Cancel"].click()
         XCTAssertTrue(source.exists)
         app.typeKey("w", modifierFlags: .command)
-        app.buttons["Don’t Save"].click()
+        app.sheets.buttons["Don’t Save"].click()
         XCTAssertEqual(try? String(contentsOf: file, encoding: .utf8), "# Original heading\n\nReadable paragraph.\n")
     }
 }
