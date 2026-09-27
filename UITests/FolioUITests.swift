@@ -68,13 +68,15 @@ final class FolioUITests: XCTestCase {
         let finder = XCUIApplication(bundleIdentifier: "com.apple.finder")
         finder.activate()
         finder.typeKey(" ", modifierFlags: [])
-        XCTAssertTrue(finder.buttons["QLControlOpen"].firstMatch.waitForExistence(timeout: 15))
+        XCTAssertTrue(finder.descendants(matching: .any)["QLControlOpen"].firstMatch.waitForExistence(timeout: 15))
         XCTAssertTrue(finder.staticTexts["Original heading"].firstMatch.waitForExistence(timeout: 10))
         // Keep the actual system preview for visual inspection, including extension failures.
         let screenshot = XCTAttachment(screenshot: finder.screenshot())
         screenshot.name = "Finder Quick Look"; screenshot.lifetime = .keepAlways; add(screenshot)
         finder.typeKey(.escape, modifierFlags: [])
-        XCTAssertTrue(NSWorkspace.shared.open(file))
+        let fileIcon = finder.images[file.lastPathComponent].firstMatch
+        XCTAssertTrue(fileIcon.waitForExistence(timeout: 5))
+        fileIcon.doubleClick()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
     }
 
