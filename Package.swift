@@ -10,6 +10,7 @@ let package = Package(
         .executable(name: "FolioCLI", targets: ["FolioCLI"]),
         .executable(name: "FolioPreviewHost", targets: ["FolioPreview"]),
         .executable(name: "FolioBench", targets: ["FolioBench"]),
+        .executable(name: "FolioLayoutCheck", targets: ["FolioLayoutCheck"]),
     ],
     dependencies: [.package(url: "https://github.com/swiftlang/swift-markdown.git", exact: "0.9.0")],
     targets: [
@@ -19,6 +20,7 @@ let package = Package(
         .executableTarget(name: "FolioCLI", dependencies: ["FolioCore"]),
         .executableTarget(name: "FolioPreview", dependencies: ["FolioCore"], path: "Extension", exclude: ["Info.plist", "FolioPreview.entitlements"]),
         .executableTarget(name: "FolioBench", dependencies: ["FolioCore"], path: "Tools/FolioBench"),
+        .executableTarget(name: "FolioLayoutCheck", dependencies: ["FolioCore"], path: "Tools/FolioLayoutCheck"),
         .testTarget(name: "FolioCoreTests", dependencies: ["FolioCore"]),
         .testTarget(name: "FolioAppTests", dependencies: ["FolioApp"]),
     ],

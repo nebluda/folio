@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Exercise the actual CLI process without modifying user documents."""
-import os, pathlib, subprocess
+import os, pathlib, plistlib, subprocess
 root = pathlib.Path(__file__).resolve().parents[1]
 cli = root / 'build/Folio.app/Contents/Helpers/folio'
 def run(*args, env=None):
     return subprocess.run([str(cli), *args], capture_output=True, text=True, timeout=10, env=env)
-assert run('--version').stdout.strip() == 'Folio 0.1.0'
+with (root / 'build/Folio.app/Contents/Info.plist').open('rb') as file:
+    version = plistlib.load(file)['CFBundleShortVersionString']
+assert run('--version').stdout.strip() == f'Folio {version}'
 assert 'Usage:' in run('--help').stdout
 for args in [('--unknown',), ('missing.md',), (str(root),)]:
     result = run(*args)

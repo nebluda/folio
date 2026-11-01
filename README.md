@@ -29,7 +29,7 @@ scripts/install.sh
 
 This installs `~/Applications/Folio.app` and `~/.local/bin/folio`. Add `~/.local/bin` to your shell's PATH if needed. Run `scripts/uninstall.sh` to remove both; documents are untouched.
 
-Builds are ad-hoc signed for local use. This prototype is **not notarized**. Public download distribution will require Developer ID signing and notarization.
+Builds and [release downloads](https://github.com/nebluda/folio/releases) are ad-hoc signed. This prototype is **not notarized**, so macOS may block a downloaded build. Building locally remains supported with the commands above.
 
 ## Finder setup
 
@@ -73,6 +73,8 @@ The command resolves relative paths from the current directory. Invalid options,
 
 GitHub-style headings, lists, task lists, tables, links, images, and highlighted code. Rendered reading is the default; source editing is an explicit mode. Edit mode colors Markdown headings, emphasis, links, list markers, quotes, and code. Highlighting adapts to light/dark appearance and uses temporary display attributes, preserving plain text, selection, and undo history. Windows support New, Open Recent, Save As, undo/redo, Find, and zoom. Close with unsaved edits offers Save, Don't Save, or Cancel.
 
+Tables use the available window width and preserve readable words in each column. Long descriptions wrap to leave room for short labels. When columns cannot fit, the table scrolls horizontally without widening the rest of the document. This also applies to Finder Quick Look.
+
 Use the toolbar’s Share button or **File → Share** to share the `.md` file through available macOS services. Folio uses the native document-sharing flow, which saves current edits or asks for a save location before sending. Cancelling the share menu sends nothing.
 
 External changes reload a clean document. If you have unsaved edits, Folio lets you reload or keep them and save a separate copy. It refuses to overwrite a disk version it has not loaded.
@@ -85,6 +87,7 @@ Images are embedded from the document folder, including subfolders, up to 5 MB e
 
 ```sh
 swift test                  # Requires full Xcode for XCTest
+swift run FolioLayoutCheck build/layout-screenshots  # Real WebKit layout; also works with Command Line Tools
 python3 scripts/package.py
 python3 scripts/test-cli.py
 brew install xcodegen

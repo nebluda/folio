@@ -5,7 +5,7 @@ public enum CLIAction: Equatable {
 }
 
 public enum CLIArguments {
-    public static let version = "0.1.0"
+    public static let version = "0.1.1"
     public static let help = """
     Folio — Preview for Markdown
     Usage: folio [--] [file.md …]

@@ -1,4 +1,14 @@
-# Folio 0.1.0 validation
+# Folio validation
+
+## 0.1.1 table layout regression — 2026-11-01
+
+`Fixtures/TableLayout.md` covers a short label column beside a long description, inline code, compact numeric columns, seven-column tables, and long unbroken code/URLs. `swift run FolioLayoutCheck build/layout-screenshots` renders it with the shared renderer in a real `WKWebView` and checks text line fragments, column allocation, viewport containment, and horizontal scrolling. The same HTML and CSS are used by the app and Quick Look; no document scripts are enabled.
+
+The original `overflow-wrap:anywhere` reduced the first column to 41 CSS pixels at an 800-pixel viewport and failed the readable-label checks at all six tested width/zoom combinations. Changing it to `break-word` preserves word-sized intrinsic minimums: the same table now allocates 141 / 225 / 337 pixels across its three columns and fits without scrolling. This follows the [CSS Text intrinsic sizing rules](https://www.w3.org/TR/css-text-3/#overflow-wrap-property). Tables exceeding the viewport remain in their own horizontal scroller.
+
+Eight scenarios pass locally: widths 360, 540, 800, and 1280 at 100%; an 800-pixel window at 150% and 200%; and dark appearance at 1280/100% and 800/200%. The light 800-pixel and dark 1280-pixel snapshots were visually reviewed. CI now runs these layout checks and retains the screenshots alongside its existing Swift, CLI, and native UI checks.
+
+## 0.1.0 baseline
 
 Recorded 2026-09-27. This is an installable local prototype, ad-hoc signed, not a notarized public release.
 
@@ -48,6 +58,6 @@ The app benchmark opens temporary fixture windows and terminates only its own pr
 ## Remaining release work
 
 - Reduce warm window-open latency below 300 ms.
-- Developer ID signing, notarization, and a public binary distribution/update process.
+- Developer ID signing, notarization, and an automatic update process. Release archives are currently ad-hoc signed.
 - Validate on physical macOS 14 and Intel hardware; the deployment target is macOS 14, but local validation used Apple Silicon on macOS 26 and CI uses macOS 15.
 - Mixed line endings round-trip exactly without edits; editing normalizes them to the detected convention. Quick Look can show placeholders for local images blocked by its sandbox. Remote images, SVG, raw HTML execution, diagrams, and math are intentionally unsupported.

@@ -17,6 +17,8 @@ jobs:
           swift --version
       - name: Unit and document integration tests
         run: swift test
+      - name: WebKit table layout regression checks
+        run: swift run FolioLayoutCheck build/layout-screenshots
       - name: Build relocatable release bundle
         run: python3 scripts/package.py
       - name: CLI process tests
@@ -46,3 +48,4 @@ jobs:
             build/Folio-macOS.zip
             build/UIResults.xcresult
             build/screenshots
+            build/layout-screenshots
