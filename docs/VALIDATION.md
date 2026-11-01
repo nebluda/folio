@@ -1,5 +1,20 @@
 # Folio validation
 
+## Rendering-change checklist
+
+The table regression escaped because the existing renderer tests checked HTML structure without measuring the layout. `overflow-wrap:anywhere` allowed WebKit to treat individual characters as valid minimum column widths, so long descriptions crowded out short labels. Expanding the table alone did not guarantee readable columns.
+
+For future changes to HTML, CSS, or preview sizing:
+
+1. Reproduce the reported failure with a small, anonymized Markdown fixture. Confirm that a layout assertion fails before applying the fix; keep the fixture as a regression case. Do not publish private document content or screenshots.
+2. Validate the actual shared renderer in WebKit. Assert user-visible outcomes such as intact short labels, sensible space allocation, no overlapping/clipped content, and usable overflow scrolling. HTML string checks and CSS declaration checks are not substitutes for layout checks.
+3. Exercise uneven content: short labels beside long prose, compact numbers, inline code, long unbroken tokens/URLs, and many columns. Test narrow and wide windows, zoom, and light/dark appearance. Extend `FolioLayoutCheck` when a new failure is not covered.
+4. Preserve readable content before forcing a table to fit. Let descriptions wrap, keep compact columns compact, and use the table's horizontal scroller when readable columns cannot fit. Avoid blanket character-breaking rules or equal-width columns that ignore content.
+5. Run `swift run FolioLayoutCheck build/layout-screenshots` and inspect representative screenshots. Geometry assertions catch measurable failures; visual review catches awkward results the assertions do not yet cover. Require the existing Swift, layout, CLI, and native UI CI checks before publishing.
+6. Verify the installed app, CLI, and registered Quick Look extension versions after an update. Reopen existing previews to avoid mistaking cached rendering for the newly installed behavior.
+
+These checks prevent the known failure and make similar issues easier to detect; they do not prove that every possible Markdown document will lay out well.
+
 ## 0.1.1 table layout regression — 2026-11-01
 
 `Fixtures/TableLayout.md` covers a short label column beside a long description, inline code, compact numeric columns, seven-column tables, and long unbroken code/URLs. `swift run FolioLayoutCheck build/layout-screenshots` renders it with the shared renderer in a real `WKWebView` and checks text line fragments, column allocation, viewport containment, and horizontal scrolling. The same HTML and CSS are used by the app and Quick Look; no document scripts are enabled.

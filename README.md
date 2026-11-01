@@ -97,6 +97,8 @@ xcodebuild test -project Folio.xcodeproj -scheme Folio -destination 'platform=ma
 
 The Swift package contains shared rendering/file/CLI logic, the AppKit document app, and the Quick Look provider. `project.yml` generates the checked-in Xcode project used for UI tests. CI runs unit, document, CLI process, and native UI tests, and uploads an app bundle and UI test results.
 
+For HTML, CSS, or preview sizing changes, follow the [rendering-change checklist](docs/VALIDATION.md#rendering-change-checklist). CI also measures actual WebKit table layout across window sizes and zoom levels; review the captured screenshots before releasing a rendering change.
+
 Swift Markdown 0.9.0 (Apache 2.0 with Runtime Library Exception) provides the parser. highlight.js 11.11.1 (BSD 3-Clause) is vendored with its license; syntax highlighting runs through JavaScriptCore and produces static HTML. Folio itself is MIT licensed.
 
 ## Performance and validation
