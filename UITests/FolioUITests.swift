@@ -80,7 +80,8 @@ final class FolioUITests: XCTestCase {
         app.typeKey(.rightArrow, modifierFlags: [])
         XCTAssertTrue(child.exists)
         app.typeKey(.downArrow, modifierFlags: [])
-        let target = preview.staticTexts["Jump here"]
+        // WebKit may expose both the heading and its text as matching elements.
+        let target = preview.staticTexts["Jump here"].firstMatch
         expectation(for: NSPredicate { _, _ in target.exists && preview.frame.intersects(target.frame) },
                     evaluatedWith: nil)
         waitForExpectations(timeout: 5)
