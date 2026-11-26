@@ -27,3 +27,6 @@ img { max-width:100%; height:auto; border-radius:5px; } .image-placeholder { dis
 .hljs-keyword,.hljs-selector-tag,.hljs-literal { color:#a3298b; } .hljs-string,.hljs-attr { color:#b0422f; } .hljs-number,.hljs-symbol { color:#6654bb; } .hljs-comment { color:var(--muted); } .hljs-title,.hljs-built_in { color:#246d85; }
 @media(prefers-color-scheme:dark) { .hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#f28ed3} .hljs-string,.hljs-attr{color:#edaa83} .hljs-number,.hljs-symbol{color:#c6afff} .hljs-title,.hljs-built_in{color:#81c9dc} }
 @media(max-width:540px) { main { padding:24px 24px 48px; } .table-wrap { max-width:calc(100vw - 48px); } }
+@media screen {
+  .long-document > :is(.table-wrap, pre) { content-visibility:auto; contain-intrinsic-block-size:auto 140px; }
+}

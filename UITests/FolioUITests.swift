@@ -59,6 +59,38 @@ final class FolioUITests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    func testTableOfContentsKeyboardNavigationAndCollapse() throws {
+        app.terminate()
+        let separator = String(repeating: "A paragraph between headings.\n\n", count: 55)
+        let source = "# Overview\n\n" + separator + "### Jump here\n\n" + separator + "## End\n"
+        try Data(source.utf8).write(to: file)
+        app.launch()
+        let preview = app.webViews.firstMatch
+        XCTAssertTrue(preview.waitForExistence(timeout: 10))
+
+        let outline = app.outlines["DocumentHeadings"]
+        XCTAssertFalse(outline.exists)
+        app.typeKey("o", modifierFlags: [.command, .shift])
+        XCTAssertTrue(outline.waitForExistence(timeout: 5))
+        let child = outline.rows.element(boundBy: 1)
+        XCTAssertTrue(child.waitForExistence(timeout: 5))
+        outline.rows.element(boundBy: 0).click()
+        app.typeKey(.leftArrow, modifierFlags: [])
+        XCTAssertFalse(child.exists)
+        app.typeKey(.rightArrow, modifierFlags: [])
+        XCTAssertTrue(child.exists)
+        app.typeKey(.downArrow, modifierFlags: [])
+        let target = preview.staticTexts["Jump here"]
+        expectation(for: NSPredicate { _, _ in target.exists && preview.frame.intersects(target.frame) },
+                    evaluatedWith: nil)
+        waitForExpectations(timeout: 5)
+
+        app.buttons["Table of Contents"].click()
+        XCTAssertFalse(outline.exists)
+        app.typeKey("o", modifierFlags: [.command, .shift])
+        XCTAssertTrue(child.waitForExistence(timeout: 5))
+    }
+
     func testClosingUnsavedEditsOffersCancelAndDiscard() {
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
         app.typeKey("e", modifierFlags: .command)

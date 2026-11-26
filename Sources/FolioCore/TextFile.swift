@@ -25,17 +25,26 @@ public struct TextFile: Sendable {
         original = data
         hasBOM = data.starts(with: [0xef, 0xbb, 0xbf])
         let bytes = hasBOM ? data.dropFirst(3) : data[...]
-        guard let decoded = String(data: bytes, encoding: .utf8), !decoded.contains("\0") else {
+        guard let decoded = String(data: bytes, encoding: .utf8), !bytes.contains(0) else {
             throw FolioError.invalidUTF8
         }
-        newline = decoded.contains("\r\n") ? "\r\n" : decoded.contains("\r") ? "\r" : "\n"
-        text = decoded.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
+        if bytes.contains(13) {
+            newline = decoded.contains("\r\n") ? "\r\n" : "\r"
+            text = decoded.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
+        } else {
+            newline = "\n"
+            text = decoded
+        }
     }
 
     public init(url: URL) throws {
+        try self.init(data: Self.readBytes(at: url))
+    }
+
+    public static func readBytes(at url: URL) throws -> Data {
         let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
         guard size <= Self.maximumBytes else { throw FolioError.tooLarge }
-        try self.init(data: Data(contentsOf: url))
+        return try Data(contentsOf: url)
     }
 
     public func encoded(_ edited: String) -> Data {

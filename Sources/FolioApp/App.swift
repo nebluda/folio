@@ -88,6 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         item(edit, "Select All", #selector(NSText.selectAll(_:)), "a")
         item(edit, "Find…", #selector(DocumentWindowController.showFind(_:)), "f")
         let view = menu("View")
+        item(view, "Table of Contents", #selector(DocumentWindowController.toggleTableOfContents(_:)), "o", shift: true)
         item(view, "Edit / Preview", #selector(DocumentWindowController.toggleEditing(_:)), "e")
         item(view, "Zoom In", #selector(DocumentWindowController.zoomIn(_:)), "+")
         item(view, "Zoom Out", #selector(DocumentWindowController.zoomOut(_:)), "-")

@@ -9,6 +9,7 @@
 - **`folio notes.md`** → that same window from Terminal.
 - **Share** → send the Markdown file with the native macOS share menu.
 - **Page layout / pencil** → read or edit. **⌘E** toggles, **⌘S** saves, **⌘F** finds.
+- **Table of Contents** → browse and jump to headings. Use the toolbar, **View → Table of Contents**, or **⇧⌘O** to show or hide it.
 
 ![Folio in light appearance](docs/folio-light.png)
 
@@ -73,7 +74,11 @@ The command resolves relative paths from the current directory. Invalid options,
 
 GitHub-style headings, lists, task lists, tables, links, images, and highlighted code. Rendered reading is the default; source editing is an explicit mode. Edit mode colors Markdown headings, emphasis, links, list markers, quotes, and code. Highlighting adapts to light/dark appearance and uses temporary display attributes, preserving plain text, selection, and undo history. Windows support New, Open Recent, Save As, undo/redo, Find, and zoom. Close with unsaved edits offers Save, Don't Save, or Cancel.
 
+The Table of Contents opens to the left of the document and lists headings in order. Select a heading to jump to it. Use the disclosure triangles or **←** / **→** to collapse and expand branches, and **↑** / **↓** to move between headings. The outline is hidden when you first open a document and while you edit.
+
 Tables use the available window width and preserve readable words in each column. Long descriptions wrap to leave room for short labels. When columns cannot fit, the table scrolls horizontally without widening the rest of the document. This also applies to Finder Quick Look.
+
+In large documents, the reader colors fenced code as you scroll. Quick Look limits syntax coloring in large files and keeps every code block readable.
 
 Use the toolbar’s Share button or **File → Share** to share the `.md` file through available macOS services. Folio uses the native document-sharing flow, which saves current edits or asks for a save location before sending. Cancelling the share menu sends nothing.
 
@@ -103,4 +108,4 @@ Swift Markdown 0.9.0 (Apache 2.0 with Runtime Library Exception) provides the pa
 
 ## Performance and validation
 
-See [validation and measured performance](docs/VALIDATION.md). On an M1 Pro, the release app opened a representative 100 KB file in a median **703 ms from a fresh process** and **355 ms through the CLI with Folio running**. The cold target of 2 seconds is met; the 300 ms warm target remains a follow-up optimization. No network access is needed to render.
+The benchmarks measure app opening and Quick Look separately. The latest tests on an M1 Pro measured a **638 ms** warm app open and a **752 ms** Quick Look switch for a 1 MB Markdown file with varied fenced code. [Benchmark results and reproduction steps](docs/VALIDATION.md#follow-up-profiling)

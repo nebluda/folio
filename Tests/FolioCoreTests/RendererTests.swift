@@ -62,6 +62,33 @@ final class RendererTests: XCTestCase {
         XCTAssertNil(MarkdownRenderer.safeLink("java\nscript:alert(1)", relativeTo: nil))
     }
 
+    func testOutlineUsesRenderedHeadingIDsAndLevels() {
+        let rendered = renderer.renderPreview("""
+        # Setup
+        ### A *quick* `start`
+        ## Setup-1
+        ## Setup
+        #### Résumé 日本語
+        ## !!!
+
+        ```markdown
+        # Inside a code fence
+        ```
+        """)
+        XCTAssertEqual(rendered.headings.map(\.title), ["Setup", "A quick start", "Setup-1", "Setup", "Résumé 日本語", "!!!"])
+        XCTAssertEqual(rendered.headings.map(\.level), [1, 3, 2, 2, 4, 2])
+        XCTAssertEqual(rendered.headings.map(\.id), ["setup", "a-quick-start", "setup-1", "setup-2", "résumé-日本語", "section"])
+        for heading in rendered.headings {
+            XCTAssertTrue(rendered.html.contains("<h\(heading.level) id=\"\(heading.id)\">"))
+        }
+        XCTAssertEqual(renderer.renderPreview("# Setup").headings.first?.id, "setup")
+        XCTAssertTrue(renderer.renderPreview("No headings.").headings.isEmpty)
+    }
+
+    func testEscapePreservesUnicodeAndEscapesEveryHTMLCharacter() {
+        XCTAssertEqual(MarkdownRenderer.escape("Café &<日本語>\"'"), "Café &amp;&lt;日本語&gt;&quot;&#39;")
+    }
+
     func testMissingRemoteAndEscapingImages() throws {
         let html = renderer.render("![local](missing.png) ![remote](https://example.com/track.png) ![escape](../secret.png)", fileURL: URL(fileURLWithPath: "/tmp/docs/readme.md"))
         XCTAssertFalse(html.contains("<img"))
