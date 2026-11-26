@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		175A3221B0ACF418226A52CA /* DocumentWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9C0145498B10F56901055A /* DocumentWindowController.swift */; };
 		1BE0EFEB662EE1F5F34BA299 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00F41A415781BB25F2C309C /* PreviewProvider.swift */; };
+		24EE62951EE4E305613DD422 /* TableOfContentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDABFE0F2AE98D8A6FAEE9D5 /* TableOfContentsView.swift */; };
 		36675CBAE5DD0BF706DA6948 /* FolioUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99FA243DAD65E63720290B8 /* FolioUITests.swift */; };
 		3F287A5D0234A6B6AF784D3B /* MarkdownDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF68FF64818E4157FC6BB67 /* MarkdownDocument.swift */; };
 		5D66D20231FB94CF147E9066 /* FolioCore in Frameworks */ = {isa = PBXBuildFile; productRef = B6A8CA359CE44514A50D825D /* FolioCore */; };
@@ -62,6 +63,7 @@
 		DBA95700F204107475DF4702 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		E212F28F1A3C854EB65F0277 /* EditorHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHighlighter.swift; sourceTree = "<group>"; };
 		E7956B4DA22C0FEF86396A8B /* folio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = folio; path = .; sourceTree = SOURCE_ROOT; };
+		EDABFE0F2AE98D8A6FAEE9D5 /* TableOfContentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableOfContentsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				AE9C0145498B10F56901055A /* DocumentWindowController.swift */,
 				E212F28F1A3C854EB65F0277 /* EditorHighlighter.swift */,
 				6FF68FF64818E4157FC6BB67 /* MarkdownDocument.swift */,
+				EDABFE0F2AE98D8A6FAEE9D5 /* TableOfContentsView.swift */,
 			);
 			name = FolioApp;
 			path = Sources/FolioApp;
@@ -280,6 +283,7 @@
 				175A3221B0ACF418226A52CA /* DocumentWindowController.swift in Sources */,
 				96D956FD9854D00EB0B00DDA /* EditorHighlighter.swift in Sources */,
 				3F287A5D0234A6B6AF784D3B /* MarkdownDocument.swift in Sources */,
+				24EE62951EE4E305613DD422 /* TableOfContentsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

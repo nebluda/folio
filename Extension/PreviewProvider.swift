@@ -9,9 +9,7 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
         let url = request.fileURL
         let reply = QLPreviewReply(dataOfContentType: .html, contentSize: CGSize(width: 800, height: 900)) { reply in
             reply.stringEncoding = .utf8
-            let file = try TextFile(url: url)
-            let html = MarkdownRenderer().render(file.text, fileURL: url)
-            return Data(html.utf8)
+            return try QuickLookHTML.render(fileURL: url)
         }
         handler(reply, nil)
     }

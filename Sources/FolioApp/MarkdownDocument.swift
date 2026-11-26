@@ -16,9 +16,9 @@ final class MarkdownDocument: NSDocument {
     override var fileURL: URL? { didSet { watchDirectory() } }
 
     override func makeWindowControllers() {
-        let controller = DocumentWindowController(document: self)
+        let controller = DocumentWindowController.make(for: self)
         addWindowController(controller)
-        controller.refreshFromDocument()
+        if fileURL == nil { controller.toggleEditing(nil) }
     }
 
     override func read(from data: Data, ofType typeName: String) throws {
@@ -91,8 +91,9 @@ final class MarkdownDocument: NSDocument {
     }
 
     func checkExternalChanges() {
-        guard !conflictVisible, let url = fileURL, let latest = try? TextFile(url: url),
-              latest.original != snapshot.original, latest.original != ignoredExternalData else { return }
+        guard !conflictVisible, let url = fileURL, let data = try? TextFile.readBytes(at: url),
+              data != snapshot.original, data != ignoredExternalData,
+              let latest = try? TextFile(data: data) else { return }
         if !isDocumentEdited {
             applyExternal(latest)
             return
